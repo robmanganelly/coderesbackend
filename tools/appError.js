@@ -25,4 +25,5 @@ module.exports = class AppError extends Error {
         this.message = message;
         Error.captureStackTrace(this, this.constructor);
     }
+
 };

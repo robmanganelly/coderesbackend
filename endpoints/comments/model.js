@@ -1,7 +1,29 @@
 const mongoose = require('mongoose');
 
-const langSchema = new mongoose.Schema({});
+const commentSchema = new mongoose.Schema({
+    /* 
+    author:{ 
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Users",
+        required: true
+    }, 
+    */ // todo turn on after Users collection created
 
-const Lang = mongoose.model('languages', langSchema);
+    date: {
+        type: Date,
+        default: Date.now()
+    },
 
-module.exports = Lang;
+    text:{
+        type: String,
+        required: true,
+        minlength: 1,
+        maxlength: 2500
+    }
+
+});
+
+
+const Comment = mongoose.model("comments",commentSchema);
+
+module.exports = Comment;
