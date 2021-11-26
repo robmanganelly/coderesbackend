@@ -1,22 +1,33 @@
 const dotenv = require("dotenv");
-dotenv.config({ path: "./config.env"});
+const express = require('express');
+dotenv.config({ path: "./core/config.env"});
+
+const errorHandler = require('./middleware/errorDispatcher');
 // all env variables must be stored there, if unwanted behavior experienced, check for this file to function properly
 
 // todo require(logger) // above of all except env vars config
 
 //todo : explore advantages of socket.io for this app, if so, include here...
 
-const app = require("./app");
+const app = require("./core/app");
 
-// todo require middleware here
+// todo require middleware here // when middleware grows too much, take apart to single file
+app.use(express.json());
+require('./middleware/routes')(app);
+require('morgan');
+require('./core/db-conn'); // connect to the database 
+app.use(errorHandler);
+
+
 
 const httpServer = require("http").createServer(app);
 
-require('./db-conn'); // connect to the database 
-
 //todo if socket-io used, place config here (after db connection)
+
 
 const PORT = process.env.PORT || 3000;
 
 httpServer.listen(+PORT , ()=> console.log(`running ${process.env.NODE_ENV} server on port ${PORT} ...`))
+
+
 
