@@ -1,5 +1,5 @@
 const express = require('express');
-const { getLanguages, addLanguage } = require('./controller');
+const { getLanguages, addLanguage, deleteLanguage } = require('./controller');
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router
         addLanguage
     )
     .delete(
-        //
+        deleteLanguage
     )
     ;
 

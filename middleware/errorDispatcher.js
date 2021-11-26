@@ -8,6 +8,6 @@ module.exports = function errorHandler(err, req,res,next){
 
     // todo enhance error handling
 
-    return responseEnveloper(res, err.statusCode, err );
+    return responseEnveloper(res, err.statusCode, err,err.message );
 
 };

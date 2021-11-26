@@ -29,7 +29,6 @@ const langSchema = new mongoose.Schema({
 
 langSchema.pre('save',async function(next){
     const existent = await this.constructor.find({name:this.name});
-    console.log(existent); // todo remove this line.
     if (existent.length === 0){
         return next();
     }else{
