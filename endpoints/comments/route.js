@@ -1,18 +1,19 @@
 const express = require('express');
-const { paramsValidator } = require('../../middleware/validators');
-const { getComments, createComment, deleteCommentById } = require('./controller');
+const { validObjectIdParamValidator, commentBodyValidator } = require('../../middleware/validators');
+const catchAsync = require('../../tools/catchAsync');
+const { getComments, createComment, deleteCommentById, patchCommentById } = require('./controller');
 
 const router = express.Router();
 
 router
     .route('')
     .get(getComments)
-    .post(createComment)
+    .post(commentBodyValidator,createComment)
     ;
 
 router.route('/:id')
-    .patch()
-    .delete(paramsValidator, deleteCommentById)
+    .patch(validObjectIdParamValidator, patchCommentById)
+    .delete(validObjectIdParamValidator, deleteCommentById)
     ;
 
 

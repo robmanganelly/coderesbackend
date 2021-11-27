@@ -1,14 +1,18 @@
-const objectId = require("mongoose").Types.ObjectId;
-const ValidationError = require('./../tools/validationError')
-module.exports.bodyValidator = async(req, res, next)=>{
-    //
+const ValidationError = require('./../tools/validationError');
+const { objectIdValidator, minlengthValidator, maxlengthValidator } = require('./../tools/validatorCases');
+
+
+module.exports.validObjectIdParamValidator = async(req, res, next)=>{
+    return next(objectIdValidator(req.params.id));
 };
 
-module.exports.paramsValidator = async(req, res, next)=>{
-    if (!req.params.id || objectId.isValid(req.params.id)){
+module.exports.commentBodyValidator = async(req, res, next)=>{
+    try{
+        minlengthValidator(req.body.text,1);
+        maxlengthValidator(req.body.text,2500);
         next();
-    }else{
-        next(new ValidationError(new Error(`bad request: wrong value for id ${req.params.id}`),"validation"));
+    }catch(error){
+        next(error);
     }
-
+    
 };

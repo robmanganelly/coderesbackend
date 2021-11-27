@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start-dev": "NODE_ENV=development nodemon ",
-    "start": "node server.js"
+    "start": "NODE_ENV=production node server.js"
   },
   "name": "coderesbackend",
   "version": "1.0.0",

@@ -33,3 +33,19 @@ module.exports.deleteCommentById = catchAsync(async (req, res, next)=>{
 
     return responseEnveloper(res,204,"no data","comment deleted successfully");
 });
+
+module.exports.patchCommentById = catchAsync(async (req, res, next)=>{
+    const {id} = req.params;
+    const {text} = req.body;
+
+    if(!id || !text){
+        return next(new AppError("bad request, missing data to update",400));
+    }
+
+    const commentToUpdate = await Comment.findByIdAndUpdate(id,{text},{new:true});
+
+    if (!commentToUpdate){ return next(new AppError("The requested comment has not been found on this server",404))};
+
+    return responseEnveloper(res,200,commentToUpdate);
+
+});
