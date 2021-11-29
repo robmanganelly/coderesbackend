@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
         "coderesbackend"
-    ]
+    ],
+    "jshint.options":{
+        "esversion":8
+    }
 }

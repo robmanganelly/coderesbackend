@@ -6,6 +6,19 @@ module.exports.validObjectIdParamValidator = async(req, res, next)=>{
     return next(objectIdValidator(req.params.id));
 };
 
+module.exports.multipleIdParamsValidators = (...names)=>{
+    return async function(req, res, next){
+        try{
+            for (let name of names){
+                objectIdValidator(req.params[name]);
+            }
+            next();
+        }   catch(error){
+            next(error);
+        }
+    };
+};
+
 module.exports.commentBodyValidator = async(req, res, next)=>{
     try{
         minlengthValidator(req.body.text,1);
@@ -15,4 +28,20 @@ module.exports.commentBodyValidator = async(req, res, next)=>{
         next(error);
     }
     
+};
+
+module.exports.problemBodyValidator = async (req, res, next)=>{
+    try{
+        minlengthValidator(req.body.title,10);
+        maxlengthValidator(req.body.title,300);
+        maxlengthValidator(req.body.description,500);
+
+
+        next();
+    }catch(error){
+
+
+
+        next(error);
+    }
 };

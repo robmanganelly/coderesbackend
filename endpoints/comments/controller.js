@@ -1,13 +1,13 @@
 const Comment = require('./model');
 const catchAsync = require('./../../tools/catchAsync');
-const {responseEnveloper} = require('./../../tools/factories');
+const {responseWrapper} = require('./../../tools/factories');
 const AppError = require('./../../tools/appError');
 
 module.exports.getComments = catchAsync(async (req, res, next)=>{
     // todo protect this endpoint allow only admin accessing (further processing)
     const comments = await Comment.find({});
 
-    return responseEnveloper(res,200,comments,"all comments sent");
+    return responseWrapper(res,200,comments,"all comments sent");
     
 });
 
@@ -19,7 +19,7 @@ module.exports.createComment = catchAsync(async (req, res, next)=>{
 
     const newComment = await Comment.create({text});
     
-    return responseEnveloper(res,201,newComment,'comment added successfully');
+    return responseWrapper(res,201,newComment,'comment added successfully');
 });
 
 module.exports.deleteCommentById = catchAsync(async (req, res, next)=>{
@@ -31,7 +31,7 @@ module.exports.deleteCommentById = catchAsync(async (req, res, next)=>{
 
     const deleted = await Comment.findByIdAndDelete(id);
 
-    return responseEnveloper(res,204,"no data","comment deleted successfully");
+    return responseWrapper(res,204,"no data","comment deleted successfully");
 });
 
 module.exports.patchCommentById = catchAsync(async (req, res, next)=>{
@@ -46,6 +46,10 @@ module.exports.patchCommentById = catchAsync(async (req, res, next)=>{
 
     if (!commentToUpdate){ return next(new AppError("The requested comment has not been found on this server",404))};
 
-    return responseEnveloper(res,200,commentToUpdate);
+    return responseWrapper(res,200,commentToUpdate);
 
+});
+
+module.exports.getCommentsBySolutionId = catchAsync((req, res, next)=>{
+    //todo implement this controller.
 });

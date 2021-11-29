@@ -1,12 +1,12 @@
 const Lang = require('./model');
-const {responseEnveloper} = require('./../../tools/factories');
+const {responseWrapper} = require('./../../tools/factories');
 const catchAsync = require('../../tools/catchAsync');
 const AppError = require('./../../tools/appError');
 
 module.exports.getLanguages = catchAsync(async(req, res, next)=>{
     const allLang = await Lang.find();
     
-    return responseEnveloper(res,200,allLang);
+    return responseWrapper(res,200,allLang);
 })
 
 module.exports.addLanguage  = catchAsync(async(req, res, next)=>{
@@ -19,7 +19,7 @@ module.exports.addLanguage  = catchAsync(async(req, res, next)=>{
     const lang = await Lang.create({ name, img });
     // if (!lang) return new AppError('bad request', 400);
     
-    return responseEnveloper(res,201,"language added successfully");
+    return responseWrapper(res,201,"language added successfully");
 });
 
 module.exports.deleteLanguage = catchAsync(async (req, res, next)=>{
@@ -33,5 +33,5 @@ module.exports.deleteLanguage = catchAsync(async (req, res, next)=>{
     
     if(!deleted){ return next(new AppError("the requested resource has not been found",404))}
     
-    return responseEnveloper(res,204,"no data","successfully deleted");
+    return responseWrapper(res,204,"no data","successfully deleted");
 });

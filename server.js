@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 const express = require('express');
+
 dotenv.config({ path: "./core/config.env"});
 
 const errorHandler = require('./middleware/errorDispatcher');
@@ -13,8 +14,8 @@ const app = require("./core/app");
 
 // todo require middleware here // when middleware grows too much, take apart to single file
 app.use(express.json());
+app.use(require("morgan")("dev"));
 require('./middleware/routes')(app);
-require('morgan');
 require('./core/db-conn'); // connect to the database 
 app.use(errorHandler);
 
@@ -27,7 +28,7 @@ const httpServer = require("http").createServer(app);
 
 const PORT = process.env.PORT || 3000;
 
-httpServer.listen(+PORT , ()=> console.log(`running ${process.env.NODE_ENV} server on port ${PORT} ...`))
+httpServer.listen(+PORT , ()=> console.log(`running ${process.env.NODE_ENV} server on port ${PORT} ...`));
 
 
 
