@@ -21,6 +21,7 @@ const problemSchema = new mongoose.Schema({
     title:{
         type: String,
         required: true,
+        trim:true,
         minlength: [10, "title not enough descriptive"],
         maxlength: [300, "title too long, please choose a title shorter than 300 characters"]
     },

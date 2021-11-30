@@ -11,9 +11,9 @@ router.route('')
 
 router.route('/:id') // language id
     .get(validObjectIdParamValidator,getProblemsByLanguageId)
-    .post(multipleIdParamsValidators("id"),problemBodyValidator,postProblemByLanguageId)
-    .patch(multipleIdParamsValidators('id'),deferredProblemBodyValidator,patchProblemById) // the patch uses the prob id instead of language id// todo  make that: after a period of time can not be updated
-    .delete(deleteProblemById)    
+    .post(validObjectIdParamValidator,problemBodyValidator,postProblemByLanguageId)
+    .patch(validObjectIdParamValidator,deferredProblemBodyValidator,patchProblemById) // the patch uses the prob id instead of language id// todo  make that: after a period of time can not be updated
+    .delete(validObjectIdParamValidator,deleteProblemById)    
     ;
 
 module.exports = router;
