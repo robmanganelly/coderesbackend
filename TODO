@@ -1,6 +1,19 @@
 
 TODO:
-  -> Create the problems endpoint
+  [] create test files (unit test ?)
+  [] review the problem endpoints
+  working in the solutions endpoint:
+  [] enhance model
+  [] build controllers
+  [] build routes
+  crating the users endpoint:
+  [] create route-model-controllers
+  [] test them
+  [] modify all other dependant endpoint
+  integrate bakend-frontend:
+  [] start connection (http)
+  [] test apis on the frontend and modify
+
     
 
 
