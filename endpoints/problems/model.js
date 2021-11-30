@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const AppError = require('../../tools/appError');
 
 const problemSchema = new mongoose.Schema({
     language:{   // todo evluate if a reference is really required in model. 

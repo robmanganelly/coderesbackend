@@ -40,7 +40,21 @@ module.exports.problemBodyValidator = async (req, res, next)=>{
         next();
     }catch(error){
 
+        next(error);
+    }
+};
 
+module.exports.deferredProblemBodyValidator = async (req, res, next)=>{
+    try{
+        if(typeof(req.body.title) !== "undefined") {
+            minlengthValidator(req.body.title,10);
+            maxlengthValidator(req.body.title,300);
+        }
+        if(typeof(req.body.description) !== "undefined") maxlengthValidator(req.body.description,500);
+
+
+        next();
+    }catch(error){
 
         next(error);
     }

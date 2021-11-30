@@ -1,4 +1,5 @@
 const AppError = require('../../tools/appError');
+const { bodyFilter } = require('../../tools/bodyFilter');
 const { responseWrapper } = require('../../tools/factories');
 const catchAsync = require('./../../tools/catchAsync');
 const Problem = require('./model');
@@ -45,10 +46,29 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
 });
 
 module.exports.patchProblemById = catchAsync(async(req, res, next)=>{
-    //todo
+
+    const {id} = req.params;
+
+    const updatedProblem = await Problem.findByIdAndUpdate(id,bodyFilter(req, "title", "description"),{new: true, runValidators: true});
+
+    // todo limit the updating up to 30 min after created the problem.
+
+    if(!updatedProblem){
+        return next(new AppError("the requested problem does not exist or can not be updated",404));
+    }
+    
+    return responseWrapper(res,200,updatedProblem);
 });
 
 module.exports.deleteProblemById = catchAsync(async(req, res, next)=>{
-    //todo
+    const {id} = req.params;
+
+    const deleted = await Problem.findByIdAndDelete(id);
+
+    if(!deleted){
+        return next(new AppError("the requested document can not be found",400));
+    }else{
+        return responseWrapper(res,204,{data:"deleted"});
+    }
 });
 

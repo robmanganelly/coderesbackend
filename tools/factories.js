@@ -44,7 +44,7 @@ function expectedType(option,expected){
 }
 
 module.exports.validatorConstructor = function(field,options){
-    if(typeof field === undefined){
+    if(typeof field === "undefined"){
         throw new AppError('validation failed: invalid data',400);
     }
     else if (!["string","number"].includes(typeof field)){
