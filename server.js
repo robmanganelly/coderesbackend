@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
 const express = require('express');
 const cors = require("cors");
+const path = require("path");
+
 
 dotenv.config({ path: "./core/config.env"});
 
@@ -20,6 +22,7 @@ app.use(cors({
     origin: "*",
     methods: 'GET,POST,PATCH,DELETE'
 }));
+app.use(express.static(path.join(__dirname,"static/img")));
 app.use(require("morgan")("dev"));
 require('./middleware/routes')(app);
 require('./core/db-conn'); // connect to the database 
