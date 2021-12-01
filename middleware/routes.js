@@ -1,4 +1,5 @@
 const path = require("path");
+const express = require('express');
 
 const languages = require('./../endpoints/code-lang/route');
 const comments = require('./../endpoints/comments/route');
@@ -21,6 +22,8 @@ module.exports = function(application){
     application.use('/api/v1/comments', comments);
     application.use('/api/v1/problems',problems);
     application.use('/api/v1/solutions',solutions);
+    application.use('/api/v1',express.static(path.join(__dirname,"../static/img")));
+
 
 };
 
