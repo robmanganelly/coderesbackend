@@ -1,3 +1,4 @@
+const fs = require("fs");
 const Lang = require('./model');
 const {responseWrapper} = require('./../../tools/factories');
 const catchAsync = require('../../tools/catchAsync');
@@ -17,7 +18,7 @@ module.exports.addLanguage  = catchAsync(async(req, res, next)=>{
         return new AppError("bad request: wrong input", 400);
     }
     const lang = await Lang.create({ name, img });
-    // if (!lang) return new AppError('bad request', 400);
+    
     
     return responseWrapper(res,201,"language added successfully");
 });

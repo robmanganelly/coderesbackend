@@ -7,7 +7,6 @@ const mimetypes = {
     'image/png':'png',
     'image/jpeg': 'jpg',
     'image/jpg': 'jpg'
-
 };
 
 const storageFilter = (req, file, callback) => {
@@ -38,7 +37,9 @@ const memoryStorage = multer.memoryStorage();
             console.log('calling next on no file <multer upload>');//todo change to a logger
             return next();
         }
-        console.log(req.file);
+        //todo change this after user id implemented
+        const newImageName = `${Date.now()}${Math.floor(Math.random()*10**12)}.png`;
+
         //await sharp(req.file[0].buffer)// for arrays of images
         await sharp(req.file.buffer)// for arrays of images
         .resize(200,200)
@@ -48,8 +49,8 @@ const memoryStorage = multer.memoryStorage();
         // look the index req.file[0] for arrays and the different name;
         // .toFile(path.join( __dirname,'/../static/img',req.file.originalname));
         // req.body.img = req.file[0].filename;
-        .toFile(path.join( __dirname,'/../static/img',`${Date.now()}.${Math.random()}.png`));
-        req.body.img = req.file.originalname;
+        .toFile(path.join( __dirname,'/../static/img',newImageName));
+        req.body.img = newImageName;
         next();
     } catch (error) {
         console.log('error on resizing image'); // todo remove this
