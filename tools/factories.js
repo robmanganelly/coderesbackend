@@ -27,8 +27,9 @@ module.exports.responseWrapper = function(res, code, rawData,msg = ""){
     const enveloped = {
         status: 299 >= code && code >= 200 ? "success": "error",
         data:{ data: rawData},
-        message: msg
-    }
+        message: msg,
+        code
+    };
 
     return res.status(code).json(enveloped);
 };

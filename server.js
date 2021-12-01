@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 const express = require('express');
+const cors = require("cors");
 
 dotenv.config({ path: "./core/config.env"});
 
@@ -13,7 +14,12 @@ const errorHandler = require('./middleware/errorDispatcher');
 const app = require("./core/app");
 
 // todo require middleware here // when middleware grows too much, take apart to single file
+
 app.use(express.json());
+app.use(cors({
+    origin: "*",
+    methods: 'GET,POST,PATCH,DELETE'
+}));
 app.use(require("morgan")("dev"));
 require('./middleware/routes')(app);
 require('./core/db-conn'); // connect to the database 
