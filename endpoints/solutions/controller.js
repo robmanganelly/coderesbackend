@@ -18,13 +18,13 @@ module.exports.getAllSolutions = catchAsync(async(req, res, next)=>{
 module.exports.postSolution = catchAsync(async(req, res, next)=>{
     
     const problemId = req.params.id;
-    const {text} = req.body;
+    const {solution} = req.body;
 
     const existentProblem = await Problem.findById(problemId);
 
     if (!existentProblem){ return next(new AppError("the requested resource was not found on this server",404));}
 
-    const newSolution = await Solution.create({problemId, text});
+    const newSolution = await Solution.create({problemId, solution});
 
     return responseWrapper(res, 201,newSolution);
 
@@ -46,13 +46,13 @@ module.exports.patchSolution = catchAsync(async(req, res, next)=>{
     // requires only solution id
 
     const {id} = req.params;
-    const {text} = req.body;
+    const {solution} = req.body;
 
-    if (!id || !text){
+    if (!id || !solution){
         return next(new AppError("bad request: invalid or missing data",400));
     }
 
-    const updatedSolution = await Solution.findByIdAndUpdate(id,{text},{new: true});
+    const updatedSolution = await Solution.findByIdAndUpdate(id,{solution},{new: true});
 
     return responseWrapper(res,201,updatedSolution);
 

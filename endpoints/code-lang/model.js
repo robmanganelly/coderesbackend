@@ -35,7 +35,7 @@ langSchema.pre('save',async function(next){
         return next();
     }else{
         fs.unlink(path.join(__dirname,'../../static/img',this.img),(error)=>{
-            if(!!error){console.log(error)} // add a logger maybe || remove this line
+            if(!!error){console.log(error);} // add a logger maybe || remove this line
         });
         return next(new AppError("bad request: wrong input, this language exists already",400));
     }

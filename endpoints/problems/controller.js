@@ -3,6 +3,7 @@ const { bodyFilter } = require('../../tools/bodyFilter');
 const { responseWrapper } = require('../../tools/factories');
 const catchAsync = require('./../../tools/catchAsync');
 const Problem = require('./model');
+const Solution = require('./../solutions/model');
 
 module.exports.getAllProblems = catchAsync(async(req, res, next)=>{
 
@@ -24,24 +25,64 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
     return responseWrapper(res,200,problems);
 });
 
+// module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
+    
+//     const language = req.params.id;
+//     const {title, description, solution} = req.body;
+
+//     if(!language || !title || !description) return next(new AppError("bad request: missing required fields",400));
+
+//     const newProblem = await Problem.create({
+//         title:title,
+//         language: language,
+//         description: description
+//         //todo add here the author field once created the author endpoint.
+//     });
+
+//     if (!newProblem){
+//         return next(new AppError("bad request: invalid data",400));
+//     }
+
+//     const newSolution = await Solution.create({ problemId: newProblem._id, text: solution});
+
+//     return responseWrapper(res,201,newProblem);
+
+// });
+
 module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
     
     const language = req.params.id;
-    const {title, description} = req.body;
+    const {title, description, solution} = req.body;
 
     if(!language || !title || !description) return next(new AppError("bad request: missing required fields",400));
 
-    const newProblem = await Problem.create({
-        title:title,
-        language: language,
-        description: description
-        //todo add here the author field once created the author endpoint.
-    });
+    const session = await Solution.startSession();
 
-    if (!newProblem){
-        return next(new AppError("bad request: invalid data",400));
+    session.startTransaction();
+    try{ // this block is for transaction operational errors
+        const  options = { session };
+
+        const newProblem = await Problem.create([{
+            title:title,
+            language: language,
+            description: description
+            //todo add here the author field once created the author endpoint.
+        }],options);
+
+                
+        const newSolution = await Solution.create([{ problemId: newProblem[0]._id, solution: solution}],options);
+
+        await session.commitTransaction();
+        session.endSession();
+        
+        return responseWrapper(res,201,newProblem);
+
+    }catch(er){
+        await session.abortTransaction();
+        session.endSession();
+
+        throw er;        
     }
-    return responseWrapper(res,201,newProblem);
 
 });
 

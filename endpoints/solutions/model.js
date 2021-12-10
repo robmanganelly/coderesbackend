@@ -7,7 +7,7 @@ const solutionSchema = new mongoose.Schema({
         ref: "Problems",
         required: true
     },
-    text: {
+    solution: {
         type: String,
         minlength: [5,"too short script, not allowed"],
         maxlength: [3500, " too long script, please shorten or contact me"],
