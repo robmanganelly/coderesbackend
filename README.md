@@ -10,7 +10,7 @@ This is a *MongoDB Express.js Nodejs* based backend server.
 It contains the endpoints for serving data, and its validators
 
 ## How to use
-    1.use the command `npm run start-dev` for start de development server
+    1.use the command `npm run start-dev` for start the development server
     2.use the command 'npm start' for running the production server (not ready...)
 
 ###Contacts

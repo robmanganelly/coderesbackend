@@ -27,6 +27,6 @@ module.exports.emailValidator = (field)=>{
 
 module.exports.objectIdValidator = (field)=>{
     if (!objectId.isValid(field)){
-        return new ValidationError(new Error(`validation failed /${field}/ is not a valid mongo ObjectId `),"validation");
+        throw new ValidationError(new Error(`validation failed /${field}/ is not a valid mongo ObjectId `),"validation");
     }
 };

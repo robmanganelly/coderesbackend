@@ -1,7 +1,7 @@
 const AppError = require("./appError");
 const ValidationError = require("./validationError");
 
-module.exports.responseEnveloper = function(res, code, rawData,msg = ""){
+module.exports.responseWrapper = function(res, code, rawData,msg = ""){
     
     if (msg === ""){
         switch (true) {
@@ -27,8 +27,9 @@ module.exports.responseEnveloper = function(res, code, rawData,msg = ""){
     const enveloped = {
         status: 299 >= code && code >= 200 ? "success": "error",
         data:{ data: rawData},
-        message: msg
-    }
+        message: msg,
+        code
+    };
 
     return res.status(code).json(enveloped);
 };
@@ -44,8 +45,11 @@ function expectedType(option,expected){
 }
 
 module.exports.validatorConstructor = function(field,options){
-    if (!["string","number"].includes(typeof field)){
-        throw new AppError(`wrong type on validator constructor: unsupported type ${type}`,500) // todo review this after production.
+    if(typeof field === "undefined"){
+        throw new AppError('validation failed: invalid data',400);
+    }
+    else if (!["string","number"].includes(typeof field)){
+        throw new AppError(`wrong type on validator constructor: unsupported type ${field}`,500) // todo review this after production.
     }
     else if(typeof(field) === "string"){
         if(!!options.minlength && expectedType(options.minlength,"number") && field.length < options.minlength){
