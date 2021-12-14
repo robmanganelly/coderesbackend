@@ -19,7 +19,8 @@ TODO:
 
 DO_NOW:
     [x] create transaction for the problem
-    [] test them
+    [x] test them
+    [] implement data loading on edit problems 
 
     
 
