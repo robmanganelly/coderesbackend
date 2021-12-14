@@ -9,6 +9,12 @@ const commentSchema = new mongoose.Schema({
     }, 
     */ // todo turn on after Users collection created
 
+    source:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Solutions',
+        required: [true, "a source for the comment is mandatory"]
+    },
+
     date: {
         type: Date,
         default: Date.now()
