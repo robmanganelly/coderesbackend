@@ -24,7 +24,7 @@ module.exports.multipleIdParamsValidators = (...names)=>{
 };
 
 module.exports.commentBodyValidator = catchAsync(async(req, res, next)=>{
-
+    
     minlengthValidator(req.body.text,1);
     maxlengthValidator(req.body.text,2500);
     next();

@@ -5,6 +5,10 @@ module.exports = function errorHandler(err, req,res,next){
     
     // console.log(err);   // todo remove this line after testing
 
+    if (process.env.NODE_ENV === "development"){
+        console.log(err);
+    }
+
     return responseWrapper(res, err.statusCode, err,err.message );
 
 };

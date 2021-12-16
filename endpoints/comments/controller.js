@@ -15,7 +15,7 @@ module.exports.createCommentBySolutionId = catchAsync(async (req, res, next)=>{
     // todo enhance after adding users endpoint, comments require a user data field 
     const {id} = req.params;
     const {text} = req.body;
-
+    
     if(!id || !text){ return next(new AppError(`bad request: missing required data <${!id? "solution": "text"}>`,400));}
 
     const newComment = await Comment.create({source: id, text});

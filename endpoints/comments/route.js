@@ -7,8 +7,7 @@ const router = express.Router();
 
 router
     .route('')
-    .get(getComments) // todo remove this endpoint. move to :id, so it can reflect the solution's id it belongs to
-    .post(commentBodyValidator,createCommentBySolutionId)
+    .get(getComments) // todo remove after ending dev phase. 
     ;
 
     router.route('/:id')   
