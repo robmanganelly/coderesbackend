@@ -49,7 +49,7 @@ module.exports.deferredProblemBodyValidator = catchAsync(async (req, res, next)=
 });
 
 module.exports.solutionBodyValidator = catchAsync(async(req, res, next)=>{
-    minlengthValidator(req.body.text,5);
-    maxlengthValidator(req.body.text,3500);
+    minlengthValidator(req.body.solution,5);
+    maxlengthValidator(req.body.solution,3500);
     next();
 });
