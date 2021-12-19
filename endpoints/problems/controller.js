@@ -14,40 +14,47 @@ module.exports.getAllProblems = catchAsync(async(req, res, next)=>{
     return responseWrapper(res, 200, problems);
 });
 
+// module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
+
+//     const {id} = req.params;
+    
+//     const {isnew} = req.query;
+
+//     console.log(req.query);
+    
+//     if (!id) return next(new AppError("bad request: a language is is required",400));
+
+//     let problems =  await Problem.find({language: id});
+
+//     if (isnew === "true"){
+//         problems = problems.filter(prob=>{return prob.is_New === true;});
+//     }
+
+//     console.log(problems.length);
+
+//     return responseWrapper(res,200,problems);
+// });
+
 module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
 
     const {id} = req.params;
     
+    const {isnew} = req.query;
+
+    console.log(req.query);
+    
     if (!id) return next(new AppError("bad request: a language is is required",400));
 
-    const problems = await Problem.find({language: id});
+    const problems =  await Problem.aggregate([{ // allows to query over a dynamic value
+        $match:{ $expr : {$lte:[{$cond:[
+            isnew==="true",{$subtract:[new Date(Date.now()), "$date" ]},0
+        ]},3*3600*1000]}}
+    }]);
 
+    //todo implement favorite query after users endpoint implemented use ternary for isfavorite
+    console.log(problems.length);
     return responseWrapper(res,200,problems);
 });
-
-// module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
-    
-//     const language = req.params.id;
-//     const {title, description, solution} = req.body;
-
-//     if(!language || !title || !description) return next(new AppError("bad request: missing required fields",400));
-
-//     const newProblem = await Problem.create({
-//         title:title,
-//         language: language,
-//         description: description
-//         //todo add here the author field once created the author endpoint.
-//     });
-
-//     if (!newProblem){
-//         return next(new AppError("bad request: invalid data",400));
-//     }
-
-//     const newSolution = await Solution.create({ problemId: newProblem._id, text: solution});
-
-//     return responseWrapper(res,201,newProblem);
-
-// });
 
 module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
     
