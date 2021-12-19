@@ -1,7 +1,7 @@
 const AppError = require("./appError");
 const ValidationError = require("./validationError");
 
-module.exports.responseWrapper = function(res, code, rawData,msg = ""){
+module.exports.responseWrapper = function(res, code, rawData,msg = "",meta=null){
     
     if (msg === ""){
         switch (true) {
@@ -24,12 +24,22 @@ module.exports.responseWrapper = function(res, code, rawData,msg = ""){
     }
 
 
-    const enveloped = {
+    let enveloped = {
         status: 299 >= code && code >= 200 ? "success": "error",
         data:{ data: rawData},
         message: msg,
         code
     };
+
+    if(!!meta){
+        enveloped.meta = meta;
+    }else{
+        enveloped.meta = {};
+    }
+
+    if (Array.isArray(rawData)){
+        enveloped.meta.count = rawData.length;
+    }
 
     return res.status(code).json(enveloped);
 };

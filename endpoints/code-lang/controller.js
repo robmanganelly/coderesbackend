@@ -5,7 +5,7 @@ const catchAsync = require('../../tools/catchAsync');
 const AppError = require('./../../tools/appError');
 
 module.exports.getLanguages = catchAsync(async(req, res, next)=>{
-    const allLang = await Lang.find();
+    const allLang = await Lang.find().sort({name:1});
     
     return responseWrapper(res,200,allLang);
 })

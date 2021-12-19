@@ -4,6 +4,10 @@ const { responseWrapper } = require('../../tools/factories');
 const catchAsync = require('./../../tools/catchAsync');
 const Problem = require('./model');
 const Solution = require('./../solutions/model');
+const mongoose = require('mongoose');
+
+
+const newTimeLimit = 1/5*60*60*1000; // 24h
 
 module.exports.getAllProblems = catchAsync(async(req, res, next)=>{
 
@@ -38,18 +42,33 @@ module.exports.getAllProblems = catchAsync(async(req, res, next)=>{
 module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
 
     const {id} = req.params;
-    
     const {isnew} = req.query;
+
+    const page =  req.query.page  * 1 || 1 ;
+    const limitVal = req.query.limit * 1 || 10 ;
+    const skipVal = ( page - 1 ) * limitVal;
+
 
     console.log(req.query);
     
     if (!id) return next(new AppError("bad request: a language is is required",400));
 
     const problems =  await Problem.aggregate([{ // allows to query over a dynamic value
-        $match:{ $expr : {$lte:[{$cond:[
-            isnew==="true",{$subtract:[new Date(Date.now()), "$date" ]},0
-        ]},3*3600*1000]}}
-    }]);
+        $match:{ $expr: { $and: [
+            {$eq:["$language",mongoose.Types.ObjectId(id)]},   // matches by id
+
+            {$lte:[{$cond:[
+                isnew==="true",{$subtract:[new Date(Date.now()), "$date" ]},0
+            ]},newTimeLimit]}
+
+        ] }} // if isnew:true returns all new (less than 24h) problems
+    },{
+        $addFields:{
+            is_New: {$lte:[{$subtract:[new Date(Date.now()), "$date" ]},newTimeLimit]}
+        }
+    }
+    
+    ]);
 
     //todo implement favorite query after users endpoint implemented use ternary for isfavorite
     console.log(problems.length);

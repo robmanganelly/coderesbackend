@@ -28,20 +28,16 @@ const problemSchema = new mongoose.Schema({
     description:{
         type: String,
         maxlength: [500, 'description can not be longer than 500 characters'] 
-    }
-    // ,
-    // is_New:{
-    //     type: Boolean,
-    //     get: function(){return Date.now() - this.date <= 24*3600*1000; }
-    // }    
+    }    
 },{
-    toJSON:{ virtuals: true, getters: true},
-    toObject:{ virtuals: true, getters: true}
+    toJSON:{ virtuals: true},
+    toObject:{ virtuals: true}
 });
 
-// problemSchema.virtual('isNew').get(
+// problemSchema.virtual('is_New').get(
 //     function(){return Date.now() - this.date <= 24*3600*1000; }
 // );
+
 // problemSchema.post(/^find/,async function(result){
     
 //     result.forEach(problem => {
