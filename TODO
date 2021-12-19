@@ -20,7 +20,11 @@ TODO:
 DO_NOW:
     [x] create transaction for the problem
     [x] test them
-    [] implement data loading on edit problems 
+    [x] implement data loading on edit problems 
+    [] working on pagination from server side
+    [] create sort languages by name
+    [] create query by favorites (after user endpoint implemented)
+    [] create query by new
 
     
 
