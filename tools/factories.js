@@ -38,7 +38,7 @@ module.exports.responseWrapper = function(res, code, rawData,msg = "",meta=null)
     }
 
     if (Array.isArray(rawData)){
-        enveloped.meta.count = rawData.length;
+        enveloped.meta.sentCount = rawData.length;
     }
 
     return res.status(code).json(enveloped);

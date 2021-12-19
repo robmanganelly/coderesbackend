@@ -7,7 +7,7 @@ const Solution = require('./../solutions/model');
 const mongoose = require('mongoose');
 
 
-const newTimeLimit = 1/5*60*60*1000; // 24h
+const newTimeLimit = 24*60*60*1000; // 24h
 
 module.exports.getAllProblems = catchAsync(async(req, res, next)=>{
 
@@ -18,40 +18,24 @@ module.exports.getAllProblems = catchAsync(async(req, res, next)=>{
     return responseWrapper(res, 200, problems);
 });
 
-// module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
-
-//     const {id} = req.params;
-    
-//     const {isnew} = req.query;
-
-//     console.log(req.query);
-    
-//     if (!id) return next(new AppError("bad request: a language is is required",400));
-
-//     let problems =  await Problem.find({language: id});
-
-//     if (isnew === "true"){
-//         problems = problems.filter(prob=>{return prob.is_New === true;});
-//     }
-
-//     console.log(problems.length);
-
-//     return responseWrapper(res,200,problems);
-// });
-
 module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
 
     const {id} = req.params;
     const {isnew} = req.query;
 
-    const page =  req.query.page  * 1 || 1 ;
-    const limitVal = req.query.limit * 1 || 10 ;
-    const skipVal = ( page - 1 ) * limitVal;
-
+    const pageIndex =  req.query.page  * 1 || 1 ;
+    const recordsPerPage = req.query.limit * 1 || 10 ;
+    const recordsToSkip = ( pageIndex - 1 ) * recordsPerPage;
 
     console.log(req.query);
     
     if (!id) return next(new AppError("bad request: a language is is required",400));
+    
+    const totalDocuments = await Problem.find({language:id}).countDocuments();
+
+    if(!!req.query.page && recordsToSkip >= totalDocuments){
+        return next(new AppError('the requested resource was not found',404));         
+    }
 
     const problems =  await Problem.aggregate([{ // allows to query over a dynamic value
         $match:{ $expr: { $and: [
@@ -68,11 +52,17 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
         }
     }
     
-    ]);
+    ]).sort({name: 1}).skip(recordsToSkip).limit(recordsPerPage);
 
     //todo implement favorite query after users endpoint implemented use ternary for isfavorite
     console.log(problems.length);
-    return responseWrapper(res,200,problems);
+    return responseWrapper(res,200,problems,'',{
+        total: totalDocuments,
+        skipped: recordsToSkip,
+        pageSent: pageIndex,
+        limitPerPage: recordsPerPage
+
+    });
 });
 
 module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
