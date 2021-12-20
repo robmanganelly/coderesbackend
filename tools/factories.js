@@ -1,5 +1,6 @@
 const AppError = require("./appError");
 const ValidationError = require("./validationError");
+const catchAsync = require('./catchAsync');
 
 module.exports.responseWrapper = function(res, code, rawData,msg = "",meta=null){
     
@@ -44,8 +45,6 @@ module.exports.responseWrapper = function(res, code, rawData,msg = "",meta=null)
     return res.status(code).json(enveloped);
 };
 
-
-
 function expectedType(option,expected){
     if(typeof option !== expected){
         throw new AppError("wrong option type in validation",500);
@@ -59,7 +58,7 @@ module.exports.validatorConstructor = function(field,options){
         throw new AppError('validation failed: invalid data',400);
     }
     else if (!["string","number"].includes(typeof field)){
-        throw new AppError(`wrong type on validator constructor: unsupported type ${field}`,500) // todo review this after production.
+        throw new AppError(`wrong type on validator constructor: unsupported type ${field}`,500); // todo review this after production.
     }
     else if(typeof(field) === "string"){
         if(!!options.minlength && expectedType(options.minlength,"number") && field.length < options.minlength){
@@ -84,3 +83,32 @@ module.exports.validatorConstructor = function(field,options){
         }
     }
 };
+
+//factory controllers for easy requests
+module.exports.getByParamsId = (model, options) => catchAsync(async (req, res, next)=>{
+    const  _resource = model.findById(req.params.id);
+    let resource = null;
+    if (!options.message) options.message = 'resource sent';
+    if (!options.select){
+        resource = await _resource;
+    }
+    else if (options.select){
+        resource = await _resource.select( options.select );
+    } 
+    if (!resource) next(new AppError("resource not found",404));
+    return this.responseWrapper(res,200,resource,options.message);
+});
+
+module.exports.postResource = (Model, options) => catchAsync(async (req, res, next)=>{
+    if (!options.message) options.message ='created successfully' ;
+    let allowedFields = Object.create({});
+    if (!options.fields){ 
+        allowedFields = req.body;
+    }else{
+        options.fields.forEach(field => allowedFields[field] = req.body[field]);
+    }
+    const newDoc = await Model.create(allowedFields);
+    
+    return this.responseWrapper(res,201,newDoc,options.message);
+    
+});
