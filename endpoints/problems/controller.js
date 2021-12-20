@@ -27,7 +27,7 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
     const recordsPerPage = req.query.limit * 1 || 10 ;
     const recordsToSkip = pageIndex * recordsPerPage;
 
-    console.log(req.query);
+    console.log(req.query); 
     
     if (!id) return next(new AppError("bad request: a language is is required",400));
     
