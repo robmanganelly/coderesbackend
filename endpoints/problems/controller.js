@@ -21,7 +21,7 @@ module.exports.getAllProblems = catchAsync(async(req, res, next)=>{
 module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
 
     const {id} = req.params;
-    const {isnew} = req.query;
+    const {isnew,search} = req.query;
 
     const pageIndex =  req.query.page  * 1 || 0 ;
     const recordsPerPage = req.query.limit * 1 || 10 ;
@@ -40,7 +40,7 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
     const problems =  await Problem.aggregate([{ // allows to query over a dynamic value
         $match:{ $expr: { $and: [
             {$eq:["$language",mongoose.Types.ObjectId(id)]},   // matches by id
-
+            {$cond:[!!search,{$regexMatch: { input: "$title", regex: new RegExp(search)   } },true ]},
             {$lte:[{$cond:[
                 isnew==="true",{$subtract:[new Date(Date.now()), "$date" ]},0
             ]},newTimeLimit]}
