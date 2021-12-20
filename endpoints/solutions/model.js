@@ -10,12 +10,13 @@ const solutionSchema = new mongoose.Schema({
     solution: {
         type: String,
         minlength: [5,"too short script, not allowed"],
-        maxlength: [3500, " too long script, please shorten or contact me"],
-        required: true
+        maxlength: [3500, " too long script, please shorten"],
+        required: true,
+        trim: true,
     },
     date:{
         type: Date,
-        default: Date.now()
+        default: Date.now
     }
     /* //todo, comment out and implement after create users endpoint (needs a comma).
     postedBy:{
@@ -24,6 +25,12 @@ const solutionSchema = new mongoose.Schema({
         required: true
     }
     */
+
+});
+
+solutionSchema.pre('save',function(next){
+    // todo : delete
+    next();
 
 });
 

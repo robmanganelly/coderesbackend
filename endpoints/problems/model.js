@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const AppError = require('../../tools/appError');
 
 const problemSchema = new mongoose.Schema({
-    language:{   // todo evluate if a reference is really required in model. 
+    language:{   // todo evaluate if a reference is really required in model. 
         type: mongoose.Schema.Types.ObjectId,
         ref: "Languages",
         required: true
@@ -28,8 +28,19 @@ const problemSchema = new mongoose.Schema({
     description:{
         type: String,
         maxlength: [500, 'description can not be longer than 500 characters'] 
-    }
+    }    
 });
+
+// problemSchema.virtual('is_New').get(
+//     function(){return Date.now() - this.date <= 24*3600*1000; }
+// );
+
+// problemSchema.post(/^find/,async function(result){
+    
+//     result.forEach(problem => {
+//         problem.is_New = Date.now() - problem.date <= 12*3600*1000;
+//     });
+// });
 
 const Problem = mongoose.model('problems', problemSchema);
 
