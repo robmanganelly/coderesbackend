@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const AppError = require('../../tools/appError');
 const fs = require('fs');
 const path = require('path');
+const { string } = require('sharp/lib/is');
 
 const langSchema = new mongoose.Schema({
     name: {
@@ -10,7 +11,8 @@ const langSchema = new mongoose.Schema({
         required: true,
         minlength:[1," language name can not be empty"],
         trim: true,
-        unique: true
+        unique: true,
+        get: function(v){ return v.charAt(0).toUpperCase() + v.slice(1);  }
 
     },
     img:{
@@ -27,7 +29,7 @@ const langSchema = new mongoose.Schema({
 
         }
     }
-});
+},{toObject:{getters:true}, toJSON:{getters:true}});
 
 langSchema.pre('save',async function(next){
     const existent = await this.constructor.find({name:this.name});
