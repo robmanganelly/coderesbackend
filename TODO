@@ -1,7 +1,7 @@
 
 TODO:
   [] create test files (unit test ?)
-  [] review the problem endpoints
+  [x] review the problem endpoints
   working in the solutions endpoint:
   [] enhance model
   [x] build controllers
@@ -13,18 +13,18 @@ TODO:
   create the auth endpoint:
   [] implement simple auth ()
   integrate bakend-frontend:
-  [] start connection (http)
-  [] test apis on the frontend and modify
+  [x] start connection (http)
+  [x] test apis on the frontend and modify
 
 
 DO_NOW:
     [x] create transaction for the problem
     [x] test them
     [x] implement data loading on edit problems 
-    [] working on pagination from server side
-    [] create sort languages by name
+    [x] working on pagination from server side
+    [x] create sort languages by name
+    [x] create query by new
     [] create query by favorites (after user endpoint implemented)
-    [] create query by new
 
     
 
