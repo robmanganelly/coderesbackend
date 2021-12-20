@@ -29,9 +29,6 @@ const problemSchema = new mongoose.Schema({
         type: String,
         maxlength: [500, 'description can not be longer than 500 characters'] 
     }    
-},{
-    toJSON:{ virtuals: true},
-    toObject:{ virtuals: true}
 });
 
 // problemSchema.virtual('is_New').get(

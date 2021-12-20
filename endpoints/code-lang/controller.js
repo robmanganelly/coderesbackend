@@ -8,7 +8,7 @@ module.exports.getLanguages = catchAsync(async(req, res, next)=>{
     const allLang = await Lang.find().sort({name:1});
     
     return responseWrapper(res,200,allLang);
-})
+});
 
 module.exports.addLanguage  = catchAsync(async(req, res, next)=>{
     
@@ -32,7 +32,7 @@ module.exports.deleteLanguage = catchAsync(async (req, res, next)=>{
 
     const deleted = await Lang.findByIdAndDelete(id);
     
-    if(!deleted){ return next(new AppError("the requested resource has not been found",404))}
+    if(!deleted){ return next(new AppError("the requested resource has not been found",404));}
     
     return responseWrapper(res,204,"no data","successfully deleted");
 });

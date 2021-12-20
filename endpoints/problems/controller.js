@@ -5,7 +5,7 @@ const catchAsync = require('./../../tools/catchAsync');
 const Problem = require('./model');
 const Solution = require('./../solutions/model');
 const mongoose = require('mongoose');
-
+const Lang = require('./../code-lang/model');
 
 const newTimeLimit = 24*60*60*1000; // 24h
 
@@ -23,9 +23,9 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
     const {id} = req.params;
     const {isnew} = req.query;
 
-    const pageIndex =  req.query.page  * 1 || 1 ;
+    const pageIndex =  req.query.page  * 1 || 0 ;
     const recordsPerPage = req.query.limit * 1 || 10 ;
-    const recordsToSkip = ( pageIndex - 1 ) * recordsPerPage;
+    const recordsToSkip = pageIndex * recordsPerPage;
 
     console.log(req.query);
     
@@ -52,7 +52,7 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
         }
     }
     
-    ]).sort({name: 1}).skip(recordsToSkip).limit(recordsPerPage);
+    ]).sort('title').skip(recordsToSkip).limit(recordsPerPage);
 
     //todo implement favorite query after users endpoint implemented use ternary for isfavorite
     console.log(problems.length);
@@ -77,6 +77,13 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
     session.startTransaction();
     try{ // this block is for transaction operational errors
         const  options = { session };
+        
+        const activeLanguage  = await Lang.find({_id: language});
+        
+        console.log(activeLanguage);
+        if(!activeLanguage[0]){
+            throw new AppError('incorrect data, please verify your input: not such language',400);
+        }
 
         const newProblem = await Problem.create([{
             title:title,

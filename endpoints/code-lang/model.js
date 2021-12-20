@@ -12,7 +12,7 @@ const langSchema = new mongoose.Schema({
         minlength:[1," language name can not be empty"],
         trim: true,
         unique: true,
-        get: function(v){ return v.charAt(0).toUpperCase() + v.slice(1);  }
+        set: function(v){ return v.charAt(0).toUpperCase() + v.slice(1);  }
 
     },
     img:{
@@ -29,7 +29,7 @@ const langSchema = new mongoose.Schema({
 
         }
     }
-},{toObject:{getters:true}, toJSON:{getters:true}});
+});
 
 langSchema.pre('save',async function(next){
     const existent = await this.constructor.find({name:this.name});
