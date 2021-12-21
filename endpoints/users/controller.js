@@ -64,7 +64,7 @@ module.exports.useTokenForSetParams = function(req, res, next) {
 
 module.exports.getMyProfile = getByParamsId(User, {
     message: 'user successfully sent',
-    select: 'photo username email tokenExpiration'
+    select: 'photo username email tokenExpiration favSolutions favProblems'
 });
 module.exports.getUser = getByParamsId(User, {message: 'user successfully sent'});
 module.exports.postUser = postResource(User, {message: 'user created successfully'});

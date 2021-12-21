@@ -65,8 +65,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'user-default.png'
     },
-    favorites:{
-        
+    favProblems:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Problem'
+    },
+    favSolutions:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Solution'
     }
 
 });
