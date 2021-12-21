@@ -8,12 +8,12 @@ const route = express.Router();
 route
 .route('/new')
 .post(//todo create a validator for user signup
-    signup)
+    signup);
 
 route
 .route('/login')
 .post(// todo create a validator for login 
-    signin)
+    signin);
 
 // route
 // .route('/recovery')
