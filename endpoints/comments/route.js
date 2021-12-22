@@ -1,9 +1,10 @@
 const express = require('express');
 const { validObjectIdParamValidator, commentBodyValidator } = require('../../middleware/validators');
-const catchAsync = require('../../tools/catchAsync');
 const { getComments, createCommentBySolutionId, deleteCommentById, patchCommentById, getCommentsBySolutionId } = require('./controller');
 
 const router = express.Router();
+const {routeGuard} = require('./../../tools/route-guard');
+
 
 router
     .route('')
@@ -11,9 +12,13 @@ router
     ;
 
     router.route('/:id')   
-    //todo add here a 
-    // todo change this after adding users endpoint: this endpoint must reflect the user status, so no one can patch or delete other people's comment 
-    .get(validObjectIdParamValidator, getCommentsBySolutionId)
+    .get(validObjectIdParamValidator, getCommentsBySolutionId);
+
+
+router.use(routeGuard);
+
+router.
+    route('/:id')
     .post(validObjectIdParamValidator,commentBodyValidator,createCommentBySolutionId)
     .patch(validObjectIdParamValidator, patchCommentById) 
     .delete(validObjectIdParamValidator, deleteCommentById)

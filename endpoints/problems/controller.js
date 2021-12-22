@@ -6,6 +6,7 @@ const Problem = require('./model');
 const Solution = require('./../solutions/model');
 const mongoose = require('mongoose');
 const Lang = require('./../code-lang/model');
+const Comment = require('../comments/model');
 
 const newTimeLimit = 24*60*60*1000; // 24h
 
@@ -66,7 +67,7 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
 module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
     
     const language = req.params.id;
-    const {title, description, solution} = req.body;
+    const {title, description, solution, comments} = req.body;
     const {_id} = req.user;
 
     if(!language || !title || !description || !_id) return next(new AppError("invalid or missing data, check your input",400));
@@ -92,6 +93,10 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
 
                 
         const newSolution = await Solution.create([{ problemId: newProblem[0]._id, solution: solution, postedBy:_id}],options);
+        
+        if(!!comments && comments !== ""){
+            const newComment = await Comment.create([{author:_id, source: newSolution[0]._id, text:comments}]);
+        }
 
         await session.commitTransaction();
         session.endSession();
