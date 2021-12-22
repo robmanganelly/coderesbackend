@@ -27,7 +27,6 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
     const recordsPerPage = req.query.limit * 1 || 10 ;
     const recordsToSkip = pageIndex * recordsPerPage;
 
-    console.log(req.query); 
     
     if (!id) return next(new AppError("bad request: a language is is required",400));
     
@@ -55,7 +54,6 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
     ]).sort('title').skip(recordsToSkip).limit(recordsPerPage);
 
     //todo implement favorite query after users endpoint implemented use ternary for isfavorite
-    console.log(problems.length);
     return responseWrapper(res,200,problems,'',{
         total: totalDocuments,
         skipped: recordsToSkip,
@@ -80,7 +78,6 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
         
         const activeLanguage  = await Lang.find({_id: language});
         
-        console.log(activeLanguage);
         if(!activeLanguage[0]){
             throw new AppError('incorrect data, please verify your input: not such language',400);
         }

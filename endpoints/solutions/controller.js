@@ -20,6 +20,8 @@ module.exports.postSolution = catchAsync(async(req, res, next)=>{
     const problemId = req.params.id;
     const {solution} = req.body;
     const {_id} = req.user; // the auth guard provides the user.
+        
+    if(!problemId || !solution || !_id) return next(new AppError("invalid or missing data, can not create solution",400));
 
     const existentProblem = await Problem.findById(problemId);
 

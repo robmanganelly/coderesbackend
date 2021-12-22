@@ -8,7 +8,7 @@ module.exports = function catchAsync(handler){
         handler(req, res, next).catch(
             error=>{
                 
-                if (!error.statusCode){ error = new AppError(error.message, 500);} // todo change this line to catch uncaught exceptions, mongo errors must be caught in a different way.
+                if (!error.statusCode){ error = new AppError(error.message, 400);} // todo change this line to catch uncaught exceptions, mongo errors must be caught in a different way.
 
                 return next(error);
             }
