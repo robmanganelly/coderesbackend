@@ -67,8 +67,9 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
     
     const language = req.params.id;
     const {title, description, solution} = req.body;
+    const {_id} = req.user;
 
-    if(!language || !title || !description) return next(new AppError("bad request: missing required fields",400));
+    if(!language || !title || !description || !_id) return next(new AppError("invalid or missing data, check your input",400));
 
     const session = await Solution.startSession();
 
@@ -85,12 +86,12 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
         const newProblem = await Problem.create([{
             title:title,
             language: language,
-            description: description
-            //todo add here the author field once created the author endpoint.
+            description: description,
+            author:_id
         }],options);
 
                 
-        const newSolution = await Solution.create([{ problemId: newProblem[0]._id, solution: solution}],options);
+        const newSolution = await Solution.create([{ problemId: newProblem[0]._id, solution: solution, postedBy:_id}],options);
 
         await session.commitTransaction();
         session.endSession();
@@ -109,8 +110,9 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
 module.exports.patchProblemById = catchAsync(async(req, res, next)=>{
 
     const {id} = req.params;
+    const {_id: author} = req.user;
 
-    const updatedProblem = await Problem.findByIdAndUpdate(id,bodyFilter(req, "title", "description"),{new: true, runValidators: true});
+    const updatedProblem = await Problem.findOneAndUpdate({_id: id, author},bodyFilter(req, "title", "description"),{new: true, runValidators: true});
 
     // todo limit the updating up to 30 min after created the problem.
 
@@ -123,8 +125,10 @@ module.exports.patchProblemById = catchAsync(async(req, res, next)=>{
 
 module.exports.deleteProblemById = catchAsync(async(req, res, next)=>{
     const {id} = req.params;
+    const {_id: author} = req.user;
 
-    const deleted = await Problem.findByIdAndDelete(id);
+
+    const deleted = await Problem.findOneAndDelete({_id:id, author});
 
     if(!deleted){
         return next(new AppError("the requested document can not be found",400));

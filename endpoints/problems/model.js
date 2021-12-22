@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const AppError = require('../../tools/appError');
 
 const problemSchema = new mongoose.Schema({
-    language:{   // todo evaluate if a reference is really required in model. 
+    language:{  
         type: mongoose.Schema.Types.ObjectId,
         ref: "Languages",
         required: true
@@ -11,13 +11,11 @@ const problemSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-    /*  // todo enable this field after create user collection
     author:{ 
         type:mongoose.Schema.Types.ObjectId,
         ref:"Users",
         required: true
-    },
-     */
+    },   
     title:{
         type: String,
         required: true,
