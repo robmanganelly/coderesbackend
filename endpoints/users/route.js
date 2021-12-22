@@ -5,8 +5,8 @@ const {profileUpdating, getMyProfile, passwordUpdating, useTokenForSetParams} = 
 const {routeGuard} = require('./../../tools/route-guard');
 const {upload} = require('./../../tools/multerUploader');
 
-route.use(routeGuard); // all routes below require a logged user
 
+route.use(routeGuard); // all routes below require a logged user
 
 route
     .route('/profile')

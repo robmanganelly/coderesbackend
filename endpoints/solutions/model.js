@@ -17,14 +17,13 @@ const solutionSchema = new mongoose.Schema({
     date:{
         type: Date,
         default: Date.now
-    }
-    /* //todo, comment out and implement after create users endpoint (needs a comma).
+    },
     postedBy:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Users",
+        ref: "User",
         required: true
     }
-    */
+    
 
 });
 
