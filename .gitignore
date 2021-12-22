@@ -1,2 +1,4 @@
 config.env
 static/img
+node_modules/
+
