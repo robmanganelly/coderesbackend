@@ -37,20 +37,39 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
         return next(new AppError('the requested resource was not found',404));         
     }
 
-    const problems =  await Problem.aggregate([{ // allows to query over a dynamic value
-        $match:{ $expr: { $and: [
-            {$eq:["$language",mongoose.Types.ObjectId(id)]},   // matches by id
-            {$cond:[!!search,{$regexMatch: { input: "$title", regex: new RegExp(search)   } },true ]},
-            {$lte:[{$cond:[
-                isnew==="true",{$subtract:[new Date(Date.now()), "$date" ]},0
-            ]},newTimeLimit]}
+    const problems =  await Problem.aggregate([// allows to query over a dynamic value
+        {
+            $match:{ $expr: { $and: [
+                {$eq:["$language",mongoose.Types.ObjectId(id)]},   // matches by id
+                {$cond:[!!search,{$regexMatch: { input: "$title", regex: new RegExp(search)   } },true ]},
+                {$lte:[{$cond:[
+                    isnew==="true",{$subtract:[new Date(Date.now()), "$date" ]},0
+                ]},newTimeLimit]}
 
-        ] }} // if isnew:true returns all new (less than 24h) problems
-    },{
-        $addFields:{
-            is_New: {$lte:[{$subtract:[new Date(Date.now()), "$date" ]},newTimeLimit]}
+                ] }}, // if isnew:true returns all new (less than 24h) problems
+        },{
+            $addFields:{
+                is_New: {$lte:[{$subtract:[new Date(Date.now()), "$date" ]},newTimeLimit]}
+            }
+        },{
+            $lookup: {
+                from: "users",
+                localField: "author",
+                foreignField: "_id",
+                as: "author"
+            }
+        },{
+            $unwind : "$author"
+        } ,{
+            $project:{
+                _id:1,
+                language:1,
+                date:1,   
+                title:1,
+                description:1,
+                author: { _id:1 ,  username: 1}
+            }
         }
-    }
     
     ]).sort('title').skip(recordsToSkip).limit(recordsPerPage);
 
