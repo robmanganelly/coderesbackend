@@ -4,7 +4,7 @@ const solutionSchema = new mongoose.Schema({
     
     problemId:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Problems",
+        ref: "Problem",
         required: true
     },
     solution: {

@@ -4,12 +4,12 @@ const commentSchema = new mongoose.Schema({
      
     author:{ 
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Users",
+        ref:"User",
         required: true
     }, 
     source:{ // a comment must always be tied to a solution
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Solutions',
+        ref: 'Solution',
         required: [true, "a source for the comment is mandatory"]
     },
 

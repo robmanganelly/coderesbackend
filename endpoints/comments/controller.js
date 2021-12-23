@@ -61,7 +61,7 @@ module.exports.getCommentsBySolutionId = catchAsync(async (req, res, next)=>{
 
     if (!id){ return next(new AppError("missing required data: solution  ",400)); }
 
-    const comments = await Comment.find({source: id});
+    const comments = await Comment.find({source: id}).populate({path:'author', select: 'username'});
 
     return responseWrapper(res,200,comments,"all comments sent");
 

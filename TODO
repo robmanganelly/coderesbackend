@@ -25,6 +25,7 @@ DO_NOW:
     [x] create sort languages by name
     [x] create query by new
     [] create query by favorites (after user endpoint implemented)
+    [] populate problem.aggregate
 
     
 

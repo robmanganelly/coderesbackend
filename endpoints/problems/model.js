@@ -4,7 +4,7 @@ const AppError = require('../../tools/appError');
 const problemSchema = new mongoose.Schema({
     language:{  
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Languages",
+        ref: "Language",
         required: true
     },
     date: {
@@ -13,7 +13,7 @@ const problemSchema = new mongoose.Schema({
     },
     author:{ 
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Users",
+        ref:"User",
         required: true
     },   
     title:{

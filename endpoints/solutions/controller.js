@@ -41,7 +41,7 @@ module.exports.postSolution = catchAsync(async(req, res, next)=>{
 module.exports.getSolutionsById = catchAsync(async(req, res, next)=>{
     const {id} = req.params;
 
-    const allSolutions = await Solution.find({problemId: id});
+    const allSolutions = await Solution.find({problemId: id}).populate({path: 'postedBy', select: 'username'});
     if (!allSolutions){
         return next(new AppError("the requested solutions does not exist on this server",404));
     }
