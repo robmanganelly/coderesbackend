@@ -23,7 +23,7 @@ const solutionSchema = new mongoose.Schema({
         ref: "User",
         required: true
     }
-    
+    // todo create logic on model for implement like dislike
 
 });
 

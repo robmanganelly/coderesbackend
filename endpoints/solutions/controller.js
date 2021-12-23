@@ -51,7 +51,9 @@ module.exports.getSolutionsById = catchAsync(async(req, res, next)=>{
 });
 
 module.exports.patchSolution = catchAsync(async(req, res, next)=>{
-
+    
+    //todo implement like dislike behavior in this controller.....
+    
     const {id} = req.params;
     const {solution} = req.body;
     const {_id} = req.user;
@@ -60,7 +62,11 @@ module.exports.patchSolution = catchAsync(async(req, res, next)=>{
         return next(new AppError("bad request: invalid or missing data",400));
     }
 
-    const updatedSolution = await Solution.findOneAndUpdate({_id:id, postedBy:_id},{solution},{new: true});
+    const updatedSolution = await Solution.findOneAndUpdate(
+        {_id:id, postedBy:_id},
+        !solution?{}:{solution}, // solution can be empty: for the cases of like dislike (route recycling)
+        {new: true}
+    );
     if(!updatedSolution){ return next(new AppError('can not update the requested resource, check your input',400));}
 
     return responseWrapper(res,201,updatedSolution);

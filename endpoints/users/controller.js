@@ -74,6 +74,7 @@ module.exports.postUser = factories.postResource(User, {message: 'user created s
 module.exports.manageFavorites = catchAsync(async(req, res, next)=>{
     const {_id} = req.user;
     const { favorite, source, action } = req.query;
+    console.log(req.query); // todo remove this after  testing
 
     if(!_id ||!favorite || !["problems","solutions"].includes(source) || !["add","remove"].includes(action) ){
         return next(new AppError('missing or invalid data, check your input',400));
@@ -87,24 +88,6 @@ module.exports.manageFavorites = catchAsync(async(req, res, next)=>{
          :  await Solution.findById(favorite);
         
     if(!favoriteItem) return next(new AppError("the requested resource was not found on this server",404));
-
-    // const _userUpdatedFavorites =  await User.findByIdAndUpdate(_id,{ $cond:[
-    //     isAdding,
-    //     {
-    //         $addToSet: { $cond:[ isProblem,{ favProblems: favoriteItem._id }, { favSolutions: favoriteItem._id }   ]  }  
-    //     },{
-    //         $pullAll : { $cond:[ isProblem,{ favProblems: [favoriteItem._id] }, { favSolutions: [favoriteItem._id] }   ] }
-    //     }
-    // ]
-    // },{new: true});
-
-    // const userUpdatedFavorites = isAdding ?
-    //       await User.findByIdAndUpdate(_id,{
-    //         $addToSet: { $cond:[ isProblem,{ favProblems: favoriteItem._id }, { favSolutions: favoriteItem._id }   ]  }  
-    //       })
-    //     : await User.findByIdAndUpdate(_id,{
-    //         $pullAll : { $cond:[ isProblem,{ favProblems: [favoriteItem._id] }, { favSolutions: [favoriteItem._id] }   ] }
-    //     });
 
     const userUpdatedFavorites = isAdding ?
           isProblem?
@@ -120,6 +103,6 @@ module.exports.manageFavorites = catchAsync(async(req, res, next)=>{
     return factories.responseWrapper(
         res,200,
         userUpdatedFavorites[isProblem?"favProblems":"favSolutions"], "favorites updated"
-        ,{temp: favoriteItem._id, isProblem, isAdding} // todo remove this after testing
+        // ,{temp: favoriteItem._id, isProblem, isAdding} // todo remove this after testing
     );
 });
