@@ -61,6 +61,7 @@ module.exports.patchSolution = catchAsync(async(req, res, next)=>{
     const {state} = req.query;
 
     console.log(req.query);
+    console.log(solution);
 
     const objectState = ["-1","0","1"].includes(state) ? state*1 : null; //(-1,0,1)
 
