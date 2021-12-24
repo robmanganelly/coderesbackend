@@ -6,6 +6,10 @@ const Problem = require('./model');
 const Solution = require('./../solutions/model');
 const mongoose = require('mongoose');
 const Lang = require('./../code-lang/model');
+const Comment = require('../comments/model');
+const {User} = require('./../users/model');
+const { promisify } = require('util');
+const jwt = require("jsonwebtoken");
 
 const newTimeLimit = 24*60*60*1000; // 24h
 
@@ -21,13 +25,23 @@ module.exports.getAllProblems = catchAsync(async(req, res, next)=>{
 module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
 
     const {id} = req.params;
-    const {isnew,search} = req.query;
+    const {isnew,search,favorites} = req.query;
+    const favs = favorites==='true';
+
+    let token = null;
+    let payload = null;
+
+    if(favs){
+        token = req.headers.authorization.split(' ')[1] || 'null' ;
+        payload = await promisify(jwt.verify)(token,process.env.JWT_KEY);
+    }
+    console.log(payload);
+
 
     const pageIndex =  req.query.page  * 1 || 0 ;
     const recordsPerPage = req.query.limit * 1 || 10 ;
     const recordsToSkip = pageIndex * recordsPerPage;
 
-    console.log(req.query); 
     
     if (!id) return next(new AppError("bad request: a language is is required",400));
     
@@ -37,40 +51,83 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
         return next(new AppError('the requested resource was not found',404));         
     }
 
-    const problems =  await Problem.aggregate([{ // allows to query over a dynamic value
-        $match:{ $expr: { $and: [
-            {$eq:["$language",mongoose.Types.ObjectId(id)]},   // matches by id
-            {$cond:[!!search,{$regexMatch: { input: "$title", regex: new RegExp(search)   } },true ]},
-            {$lte:[{$cond:[
-                isnew==="true",{$subtract:[new Date(Date.now()), "$date" ]},0
-            ]},newTimeLimit]}
+    console.log(favs? "favs: Users":"not FAvs: Problems")
 
-        ] }} // if isnew:true returns all new (less than 24h) problems
-    },{
-        $addFields:{
-            is_New: {$lte:[{$subtract:[new Date(Date.now()), "$date" ]},newTimeLimit]}
-        }
-    }
-    
-    ]).sort('title').skip(recordsToSkip).limit(recordsPerPage);
+    const problems = favs? 
+            await User.aggregate([{
+                        $match:{ _id: mongoose.Types.ObjectId(payload.id) }
+                    },{
+                        $lookup:{
+                            from:"problems",
+                            localField:"favProblems",
+                            foreignField:"_id",
+                            as: "favProblems"
+
+                        }
+                    },{
+                        $unwind: "$favProblems"
+                    },{
+                        $replaceRoot:{ newRoot: "$favProblems" }
+                    },{
+                        $addFields:{
+                            is_New: {$lte:[{$subtract:[new Date(), "$date" ]},newTimeLimit]}
+                        }
+                    }]).sort('title').skip(recordsToSkip).limit(recordsPerPage)
+
+        :
+            await Problem.aggregate([// allows to query over a dynamic value
+                {
+                    $match:{ $expr: { $and: [
+                        {$eq:["$language",mongoose.Types.ObjectId(id)]},   // matches by id
+                        {$cond:[!!search,{$regexMatch: { input: "$title", regex: new RegExp(search,'i')   } },true ]},
+                        {$lte:[{$cond:[
+                            isnew==="true",{$subtract:[new Date(Date.now()), "$date" ]},0
+                        ]},newTimeLimit]}
+
+                        ] }}, // if isnew:true returns all new (less than 24h) problems
+                },{
+                    $addFields:{
+                        is_New: {$lte:[{$subtract:[new Date(Date.now()), "$date" ]},newTimeLimit]}
+                    }
+                },{
+                    $lookup: {
+                        from: "users",
+                        localField: "author",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },{
+                    $unwind : "$author"
+                } ,{
+                    $project:{
+                        _id:1,
+                        language:1,
+                        date:1,   
+                        title:1,
+                        description:1,
+                        author: { _id:1 ,  username: 1},
+                        is_New:1
+                    }
+                }
+            
+            ]).sort('title').skip(recordsToSkip).limit(recordsPerPage);
 
     //todo implement favorite query after users endpoint implemented use ternary for isfavorite
-    console.log(problems.length);
     return responseWrapper(res,200,problems,'',{
         total: totalDocuments,
         skipped: recordsToSkip,
         pageSent: pageIndex,
         limitPerPage: recordsPerPage
-
     });
 });
 
 module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
     
     const language = req.params.id;
-    const {title, description, solution} = req.body;
+    const {title, description, solution, comments} = req.body;
+    const {_id} = req.user;
 
-    if(!language || !title || !description) return next(new AppError("bad request: missing required fields",400));
+    if(!language || !title || !description || !_id) return next(new AppError("invalid or missing data, check your input",400));
 
     const session = await Solution.startSession();
 
@@ -80,7 +137,6 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
         
         const activeLanguage  = await Lang.find({_id: language});
         
-        console.log(activeLanguage);
         if(!activeLanguage[0]){
             throw new AppError('incorrect data, please verify your input: not such language',400);
         }
@@ -88,12 +144,16 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
         const newProblem = await Problem.create([{
             title:title,
             language: language,
-            description: description
-            //todo add here the author field once created the author endpoint.
+            description: description,
+            author:_id
         }],options);
 
                 
-        const newSolution = await Solution.create([{ problemId: newProblem[0]._id, solution: solution}],options);
+        const newSolution = await Solution.create([{ problemId: newProblem[0]._id, solution: solution, postedBy:_id}],options);
+        
+        if(!!comments && comments !== ""){
+            const newComment = await Comment.create([{author:_id, source: newSolution[0]._id, text:comments}]);
+        }
 
         await session.commitTransaction();
         session.endSession();
@@ -112,8 +172,9 @@ module.exports.postProblemByLanguageId = catchAsync(async(req, res, next)=>{
 module.exports.patchProblemById = catchAsync(async(req, res, next)=>{
 
     const {id} = req.params;
+    const {_id: author} = req.user;
 
-    const updatedProblem = await Problem.findByIdAndUpdate(id,bodyFilter(req, "title", "description"),{new: true, runValidators: true});
+    const updatedProblem = await Problem.findOneAndUpdate({_id: id, author},bodyFilter(req, "title", "description"),{new: true, runValidators: true});
 
     // todo limit the updating up to 30 min after created the problem.
 
@@ -126,8 +187,10 @@ module.exports.patchProblemById = catchAsync(async(req, res, next)=>{
 
 module.exports.deleteProblemById = catchAsync(async(req, res, next)=>{
     const {id} = req.params;
+    const {_id: author} = req.user;
 
-    const deleted = await Problem.findByIdAndDelete(id);
+
+    const deleted = await Problem.findOneAndDelete({_id:id, author});
 
     if(!deleted){
         return next(new AppError("the requested document can not be found",400));

@@ -24,7 +24,9 @@ DO_NOW:
     [x] working on pagination from server side
     [x] create sort languages by name
     [x] create query by new
-    [] create query by favorites (after user endpoint implemented)
+    [x] create query by favorites (after user endpoint implemented)
+    [x] populate problem.aggregate
+    [ ] fix favorite blue label (not shows properly, must update list)
 
     
 

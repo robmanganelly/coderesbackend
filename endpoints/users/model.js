@@ -67,11 +67,11 @@ const userSchema = new mongoose.Schema({
     },
     favProblems:{
         type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Problem'
+        // ref: 'Problem' // ref is not necessary
     },
     favSolutions:{
         type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Solution'
+        // ref: 'Solution'
     }
 
 });

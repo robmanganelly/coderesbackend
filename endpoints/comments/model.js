@@ -1,17 +1,15 @@
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
-    /* 
+     
     author:{ 
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Users",
+        ref:"User",
         required: true
     }, 
-    */ // todo turn on after Users collection created
-
-    source:{
+    source:{ // a comment must always be tied to a solution
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Solutions',
+        ref: 'Solution',
         required: [true, "a source for the comment is mandatory"]
     },
 

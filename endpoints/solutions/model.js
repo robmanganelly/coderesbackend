@@ -4,7 +4,7 @@ const solutionSchema = new mongoose.Schema({
     
     problemId:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Problems",
+        ref: "Problem",
         required: true
     },
     solution: {
@@ -22,8 +22,11 @@ const solutionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
-    }
+    },
+    liked:[mongoose.Schema.Types.ObjectId],
+    disliked:[mongoose.Schema.Types.ObjectId]
     
+    // todo create logic on model for implement like dislike
 
 });
 

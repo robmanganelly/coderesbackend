@@ -34,7 +34,6 @@ const memoryStorage = multer.memoryStorage();
  module.exports.imageResizing  = async function(req, res, next){
     try {    
         if (!req.file) {
-            console.log('calling next on no file <multer upload>');//todo change to a logger
             return next();
         }
         //todo change this after user id implemented
@@ -53,8 +52,6 @@ const memoryStorage = multer.memoryStorage();
         req.body.img = newImageName;
         next();
     } catch (error) {
-        console.log('error on resizing image'); // todo remove this
-        console.log(error);                     // todo remove this line after testing
         return new AppError('oops....',500);
     }
 };
