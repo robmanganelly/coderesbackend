@@ -55,9 +55,32 @@ module.exports.getSolutionsById = catchAsync(async(req, res, next)=>{
         {
             $match:{ problemId: mongoose.Types.ObjectId(id)  }
         },{
+            $lookup:{
+                from:"users",
+                localField:"postedBy",
+                foreignField:"_id",
+                as: "postedBy"
+
+            }
+        },{
+            $unwind: "$postedBy"
+        },{
             $addFields:{
                 dks:{ $size : "$disliked" },
                 lks:{ $size : "$liked" },
+            }
+        },{
+            $project:{
+                "postedBy.tokenExpiration" :0,
+                "postedBy.active" :0,
+                "postedBy.email" :0,
+                "postedBy.password" :0,
+                "postedBy.role" :0,
+                "postedBy.photo" :0,
+                "postedBy.favProblems" :0,
+                "postedBy.favSolutions" :0,
+                "postedBy.passwordChangedAt" :0,   
+                "postedBy.__v":0                 
             }
         }
     ]).sort('dks -lks');
