@@ -112,9 +112,11 @@ module.exports.patchSolution = catchAsync(async(req, res, next)=>{
     if(!!solution){
         const updatedSolution =  await Solution.findOneAndUpdate(
                 {_id:id, postedBy:_id},
-                solution, // solution can be empty: for the cases of like dislike (route recycling)
+                {solution}, // solution can be empty: for the cases of like dislike (route recycling)
                 {new: true}
         );
+
+        console.log(updatedSolution);
         
         if(!updatedSolution){ return next(new AppError('can not update the requested resource, check your input',400));}
 

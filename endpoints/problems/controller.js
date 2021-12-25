@@ -51,7 +51,7 @@ module.exports.getProblemsByLanguageId = catchAsync(async (req, res, next)=>{
         return next(new AppError('the requested resource was not found',404));         
     }
 
-    console.log(favs? "favs: Users":"not FAvs: Problems")
+    console.log(favs? "favs: Users":"not FAvs: Problems");
 
     const problems = favs? 
             await User.aggregate([{
