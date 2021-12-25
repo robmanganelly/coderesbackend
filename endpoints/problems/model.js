@@ -17,6 +17,7 @@ const problemSchema = new mongoose.Schema({
         required: true
     },   
     title:{
+        set: function(v){ return v.charAt(0).toUpperCase() + v.slice(1);  },
         type: String,
         required: true,
         trim:true,

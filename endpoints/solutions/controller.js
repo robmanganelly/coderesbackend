@@ -43,8 +43,25 @@ module.exports.postSolution = catchAsync(async(req, res, next)=>{
 
 module.exports.getSolutionsById = catchAsync(async(req, res, next)=>{
     const {id} = req.params;
+    
 
-    const allSolutions = await Solution.find({problemId: id}).populate({path: 'postedBy', select: 'username'});
+    // const allSolutions = await Solution
+    //     .find({problemId: id})
+    //     .populate({path: 'postedBy', select: 'username'})
+    //     .sort('disliked')
+    //     ;
+
+    const allSolutions = await Solution.aggregate([
+        {
+            $match:{ problemId: mongoose.Types.ObjectId(id)  }
+        },{
+            $addFields:{
+                dks:{ $size : "$disliked" },
+                lks:{ $size : "$liked" },
+            }
+        }
+    ]).sort('dks -lks');
+
     if (!allSolutions){
         return next(new AppError("the requested solutions does not exist on this server",404));
     }

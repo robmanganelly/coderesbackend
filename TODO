@@ -3,15 +3,15 @@ TODO:
   [] create test files (unit test ?)
   [x] review the problem endpoints
   working in the solutions endpoint:
-  [] enhance model
+  [x] enhance model
   [x] build controllers
   [x] build routes
   crating the users endpoint:
-  [] create route-model-controllers
+  [x] create route-model-controllers
   [] test them
-  [] modify all other dependant endpoint
+  [x] modify all other dependant endpoint
   create the auth endpoint:
-  [] implement simple auth ()
+  [x] implement simple auth ()
   integrate bakend-frontend:
   [x] start connection (http)
   [x] test apis on the frontend and modify
@@ -26,7 +26,8 @@ DO_NOW:
     [x] create query by new
     [x] create query by favorites (after user endpoint implemented)
     [x] populate problem.aggregate
-    [ ] fix favorite blue label (not shows properly, must update list)
+    [x] fix favorite blue label (not shows properly, must update list)
+    [ ] minify update profile for uploading photos only
 
     
 
