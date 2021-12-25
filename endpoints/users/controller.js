@@ -4,13 +4,17 @@ const jwt = require('jsonwebtoken');
 const {User} = require('./model');
 const factories = require('../../tools/factories');
 const catchAsync = require('../../tools/catchAsync');
+const {bodyFilter} = require('./../../tools/bodyFilter');
 const AppError = require('../../tools/appError');
 const Problem = require('./../problems/model');
 const Solution = require('./../solutions/model');
+const fs = require('fs');
+const path = require('path');
 
 
-//profile
-module.exports.profileUpdating = catchAsync(async function(req, res, next) {
+module.exports.passwordUpdating = catchAsync(async function(req, res, next) {
+    
+    const lackOfPermissionsError =  new AppError('You don\'t have enough permissions to do this, please log in', 401);
 
     const {oldPassword, updatedPassword} = req.body;
     if (!oldPassword || !updatedPassword || (oldPassword === updatedPassword)) {
@@ -39,18 +43,18 @@ module.exports.profileUpdating = catchAsync(async function(req, res, next) {
     });
 });
 
-module.exports.passwordUpdating = catchAsync(async function (req, res, next){ // todo review
+module.exports.profileUpdating = catchAsync(async function (req, res, next){ // todo review
     // not allowed for password role or email, or any other sensitive field
     if (req.body.password || req.body.role || req.body.email ) return next(new AppError(
         'not allowed to edit sensitive fields',403));
     let filtered = bodyFilter(req,'username', 'photo');
-    if (req.file) filtered.photo = req.file.filename;
-
+    if (req.file) filtered.photo = req.body.img;
+    
     const updatedUser = await User.findByIdAndUpdate(
         req.user._id,
         filtered,
         {runValidators: true, new:true}
-    );
+    ).select(' -password -passwordChangedAt -active ');
 
     if (!updatedUser) return next(new AppError('user can not be found',400));
 

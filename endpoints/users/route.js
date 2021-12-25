@@ -3,7 +3,7 @@ const route = express.Router();
 
 const {profileUpdating, getMyProfile, passwordUpdating, useTokenForSetParams, manageFavorites} = require("./controller");
 const {routeGuard} = require('./../../tools/route-guard');
-const {upload} = require('./../../tools/multerUploader');
+const {upload, uploadBuffer, imageResizing} = require('./../../tools/multerUploader');
 
 
 route.use(routeGuard); // all routes below require a logged user
@@ -18,7 +18,7 @@ route
 
 route
     .route('/profile/edition')
-    .patch(upload.single('file'),profileUpdating);
+    .patch(uploadBuffer.single('photo'),imageResizing,profileUpdating);
 route
     .route('/profile/password')
     .patch(
