@@ -27,7 +27,7 @@ DO_NOW:
     [x] create query by favorites (after user endpoint implemented)
     [x] populate problem.aggregate
     [x] fix favorite blue label (not shows properly, must update list)
-    [ ] minify update profile for uploading photos only
+    [x] minify update profile for uploading photos only
 
     
 
