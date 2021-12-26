@@ -55,9 +55,32 @@ module.exports.getSolutionsById = catchAsync(async(req, res, next)=>{
         {
             $match:{ problemId: mongoose.Types.ObjectId(id)  }
         },{
+            $lookup:{
+                from:"users",
+                localField:"postedBy",
+                foreignField:"_id",
+                as: "postedBy"
+
+            }
+        },{
+            $unwind: "$postedBy"
+        },{
             $addFields:{
                 dks:{ $size : "$disliked" },
                 lks:{ $size : "$liked" },
+            }
+        },{
+            $project:{
+                "postedBy.tokenExpiration" :0,
+                "postedBy.active" :0,
+                "postedBy.email" :0,
+                "postedBy.password" :0,
+                "postedBy.role" :0,
+                "postedBy.photo" :0,
+                "postedBy.favProblems" :0,
+                "postedBy.favSolutions" :0,
+                "postedBy.passwordChangedAt" :0,   
+                "postedBy.__v":0                 
             }
         }
     ]).sort('dks -lks');
@@ -89,9 +112,11 @@ module.exports.patchSolution = catchAsync(async(req, res, next)=>{
     if(!!solution){
         const updatedSolution =  await Solution.findOneAndUpdate(
                 {_id:id, postedBy:_id},
-                solution, // solution can be empty: for the cases of like dislike (route recycling)
+                {solution}, // solution can be empty: for the cases of like dislike (route recycling)
                 {new: true}
         );
+
+        console.log(updatedSolution);
         
         if(!updatedSolution){ return next(new AppError('can not update the requested resource, check your input',400));}
 
