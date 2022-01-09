@@ -7,7 +7,7 @@ const conn_string = process.env.NODE_ENV === 'production' ?
 
 mongoose.connect(
     conn_string, 
-    { // important: if you clone this repo you must add your own connection string
+    { // important: if you use dev server please ensure having mongodb installed locally
         useNewUrlParser: true,
     }// todo replace this console.log with proper logger service.
 ).then(
