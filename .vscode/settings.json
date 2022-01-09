@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
-        "coderesbackend"
+        "coderesbackend",
+        "codetricksdb"
     ],
     "jshint.options":{
         "esversion":9

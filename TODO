@@ -31,7 +31,10 @@ DO_NOW:
 
     
 
-
+    [] integrate docker with the server
+        [] the connection string and all the secrets
+        [] the data persistence
+        
 
 
 

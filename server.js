@@ -22,7 +22,9 @@ app.use(cors({
     origin: "*",
     methods: 'GET,POST,PATCH,DELETE'
 }));
-app.use(require("morgan")("dev"));
+if (process.env.NODE_ENV === 'development'){
+    app.use(require("morgan")("dev"));
+}
 require('./middleware/routes')(app);
 require('./core/db-conn'); // connect to the database 
 app.use(errorHandler);
