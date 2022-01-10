@@ -1,8 +1,6 @@
 version: "3.9"
 services:
   database:
-    # networks:
-    #   - codetricks
     image: mongo
     volumes:
       - db:/data/db
@@ -14,36 +12,9 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile-dev
-    # networks:
-      # - codetricks
-    environment:
-      ENV NODE_ENV: development
-      ENV JWT_COOKIE_EXPIRATION: 100
-      ENV JWT_KEY: this_is_a_non_secure_key_please_not_use_it_for_production
-      ENV JWT_EXPIRATION: 15d
-    command: sh -c "npm install --production=false && npm run start-dev"
     ports:  
       - 3000:3000
     container_name: codetricks
-
-  # codeapp:
-  #   networks:
-  #     - codetricks
-  #   image: robmanganelly/code-tricks
-  #   command: sh -c "npm install --production=false && npm run start-dev"
-  #   ports:
-  #     - 3000:3000
-  #   working_dir: /src
-  #   volumes:
-  #     - appsrc:/src
-  #   environment:
-  #     ENV NODE_ENV: development
-  #     ENV JWT_COOKIE_EXPIRATION: 100
-  #     ENV JWT_KEY: this_is_a_non_secure_key_please_not_use_it_for_production
-  #     ENV JWT_EXPIRATION: 15d
-  #   container_name: codetricks
-# networks: 
-#   codetricks:
 volumes:
   db:
   appsrc:
