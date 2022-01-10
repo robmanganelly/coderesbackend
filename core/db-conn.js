@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 
+const host__ = process.env.IS_DOCKER==="is_docker"? 'mongodb-composed':'localhost';
+
 const conn_string = process.env.NODE_ENV === 'production' ? 
 // process.env.DB_CONN_STRING : 
 `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER_URL}/codetricksdb?retryWrites=true&w=majority`:
-'mongodb://localhost:27017/codetricksdb';
+`mongodb://${host__}:27017/codetricksdb`;
 
 mongoose.connect(
     conn_string, 
@@ -14,12 +16,13 @@ mongoose.connect(
     () => {
         console.log(
             process.env.NODE_ENV === 'production'?
-            "connected to Cluster": "connected to mongo:localhost"
+            "connected to Cluster": `connected to mongo:${host__}`
         );
     }
 ).catch(
     (e)=>{
         if (process.env.NODE_ENV === 'development') {
+            console.log(conn_string);
             console.log(`something went wrong while connecting to db: ${e.message}`);
             process.exit();
         }else{

@@ -6,7 +6,9 @@ This project is hosted on ~~nowhere yet~~
 This is an experimental project, but also intends to provide a place where you can find some pre elaborated code recipes for certain easy but common tasks, so you don't have to repeat over and over again the same scripts.
 
 ---
-### Docker Section
+
+## Docker Section
+
 If you prefer to use a [dockerized](https://docs.docker.com/ "Docker Official Documentation") version of this server, please refer to [the docker hub image](https://hub.docker.com/repository/docker/robmanganelly/code-tricks "https://hub.docker.com/r/robmanganelly/code-tricks"). The dockerized version is intended only for __production__ server, and you can use it with your own cluster and keys by passing the [environment variables](#environment) while running
 
 To use the dockerized version locally:
@@ -20,7 +22,8 @@ the `--name` option is optional but can help you on further calls to `run`
 for running a dev server locally you just need to run:
 
     docker login -u _your_username_ -p _your_pass
-    docker run -dp 3000:3000 --name code-tricks-dev robmanganelly/code-tricks:dev
+    docker pull robmanganelly/code-tricks
+    docker-compose up
 
 note that this version __should not__ be used on production.
 
@@ -41,8 +44,10 @@ __in both cases__, you need to manually create a file named:
     /config.env
 
 <a id=environment></a>
-## environment variables
-this file should be located on the root directory (`/`) and must contain some environment variables that are required for running the server. 
+
+## Environment variables
+
+this file should be located on the root directory (`/`) and must contain some environment variables that are required for running the server.
 > If you are using codkerized version pass these variables as arguments in the command  
 `docker run -e var=value,var=value ...`
 see docker section for details on running
