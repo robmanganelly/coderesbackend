@@ -27,6 +27,7 @@ module.exports = function(application){
     application.use('/api/v1/users',users);
     application.use('/api/v1/session',auth);
     application.use('/api/v1',express.static(path.join(__dirname,"../static/img")));
+    application.use('/',express.static(path.join(__dirname,"../static/html")));
 
 
 };
