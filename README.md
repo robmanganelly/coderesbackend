@@ -9,6 +9,8 @@ This is an experimental project, but also intends to provide a place where you c
 
 ## Docker Section
 
+Since this project uses node 16.3.1, maybe you should have another version installed on your machine, so
+
 If you prefer to use a [dockerized](https://docs.docker.com/ "Docker Official Documentation") version of this server, please refer to [the docker hub image](https://hub.docker.com/repository/docker/robmanganelly/code-tricks "https://hub.docker.com/r/robmanganelly/code-tricks"). The dockerized __"latest"__ version is intended only for __production__ server, and you can use it with your own cluster and keys by passing the [environment variables](#environment) while running
 
 To use the dockerized version locally:
@@ -18,13 +20,22 @@ To use the dockerized version locally:
 
 You must login for getting access to the repository, also, if you fail passing the environment variables the server will __not__ run.
 the `--name` option is optional but can help you on further calls to `run`
-for running a dev server locally you just need to run:
 
-    docker login -u _your_username_ -p _your_pass
-    docker pull robmanganelly/code-tricks:dev
-    docker-compose up
+For running a dev server locally, using docker functionalities you just need:
 
-note that the __robmanganelly/code-tricks:dev__ version __should not__ be used on production.
+* clone the repo
+* go to the root and open a terminal and type:
+
+        docker-compose up
+
+This command will:
+
+1. run project in a container, using node:16-alpine
+2. run mongodb in a container
+3. expose port 3000 for testing the apis
+
+Use this approach if you are using a different version of node in your machine, or you don't have mongodb installed locally.
+This is intended only for development puroposes
 
 ---
 
@@ -42,12 +53,10 @@ __in both cases__, you need to manually create a file named:
 
     /config.env
 
-<a id=environment></a>
-
-## Environment variables
+## <a id=environment>Environment variables</a>
 
 this file should be located on the root directory (`/`) and must contain some environment variables that are required for running the server.
-> If you are using codkerized version pass these variables as arguments in the command  
+> If you are using dockerized version pass these variables as arguments in the command  
 `docker run -e var=value,var=value ...`
 see docker section for details on running
 
